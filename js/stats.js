@@ -1,4 +1,5 @@
 'use strict';
+
 var CLOUD = {
   WIDTH: 420,
   HEIGHT: 270,
