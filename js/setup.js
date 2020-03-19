@@ -19,7 +19,7 @@ var LAST_NAMES = [
   'Онопко',
   'Топольницкая',
   'Нионго',
-  'Ирвинг'
+  'Ирвинг',
 ];
 
 var COATS_COLORS = [
@@ -28,10 +28,21 @@ var COATS_COLORS = [
   'rgb(146, 100, 161)',
   'rgb(56, 159, 117)',
   'rgb(215, 210, 55)',
-  'rgb(0, 0, 0)'
+  'rgb(0, 0, 0)',
+];
+
+var FIREBALL_COLORS = [
+  '#ee4830',
+  '#30a8ee',
+  '#5ce6c0',
+  '#e848d5',
+  '#e6e848',
 ];
 
 var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
+
+var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
 
 var getRandomInt = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -66,8 +77,107 @@ var getListCharacters = function (count) {
   return listCharacters;
 };
 
-document.querySelector('.setup').classList.remove('hidden');
 document.querySelector('.setup-similar').classList.remove('hidden');
+
+var setup = document.querySelector('.setup');
+var setupOpen = document.querySelector('.setup-open');
+var setupClose = setup.querySelector('.setup-close');
+var form = setup.querySelector('.setup-wizard-form');
+var wizardNameArea = form.querySelector('.setup-user-name');
+var saveButton = form.querySelector('.setup-submit');
+var setupWizard = form.querySelector('.setup-wizard');
+var setupWizardCoat = setupWizard.querySelector('.wizard-coat');
+var setupWizardEyes = setupWizard.querySelector('.wizard-eyes');
+var setupWizardFireball = form.querySelector('.setup-fireball-wrap');
+var setupWizardFireballArea = setupWizardFireball.querySelector('input');
+
+setupOpen.querySelector('img').tabIndex = 0;
+setupClose.tabIndex = 0;
+
+wizardNameArea.minLength = 2;
+
+var formCancelSubmitHandler = function () {
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+  });
+};
+
+var formSubmitHandler = function () {
+  form.action = 'https://js.dump.academy/code-and-magick';
+  form.submit();
+};
+
+wizardNameArea.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    evt.preventDefault();
+  }
+});
+
+saveButton.addEventListener('click', formSubmitHandler);
+saveButton.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    formSubmitHandler();
+  }
+});
+
+var escapePopupHandler = function (evt) {
+  if ((evt.key === ESC_KEY) && (evt.target !== wizardNameArea)) {
+    closePopup();
+  }
+};
+
+var closePopupHandler = function () {
+  setupClose.addEventListener('keydown', function (evt) {
+    if (evt.key === ENTER_KEY) {
+      closePopup();
+    }
+  });
+};
+
+var openPopup = function () {
+  setup.classList.remove('hidden');
+  document.addEventListener('keydown', escapePopupHandler);
+  setupClose.addEventListener('focus', closePopupHandler, true);
+  formCancelSubmitHandler();
+};
+
+var closePopup = function () {
+  setup.classList.add('hidden');
+  document.removeEventListener('keydown', escapePopupHandler);
+  setupClose.removeEventListener('focus', closePopupHandler, true);
+};
+
+setupOpen.addEventListener('click', function () {
+  openPopup();
+});
+
+setupOpen.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    openPopup();
+  }
+});
+
+setupClose.addEventListener('click', function () {
+  closePopup();
+});
+
+setupWizardCoat.style.cursor = 'pointer';
+setupWizardEyes.style.cursor = 'pointer';
+setupWizardFireball.style.cursor = 'pointer';
+
+setupWizardCoat.addEventListener('click', function () {
+  setupWizardCoat.style.fill = COATS_COLORS[getRandomInt(0, COATS_COLORS.length)];
+});
+
+setupWizardEyes.addEventListener('click', function () {
+  setupWizardEyes.style.fill = EYES_COLORS[getRandomInt(0, EYES_COLORS.length)];
+});
+
+setupWizardFireball.addEventListener('click', function () {
+  var fireballColor = FIREBALL_COLORS[getRandomInt(0, FIREBALL_COLORS.length)];
+  setupWizardFireball.style.backgroundColor = fireballColor;
+  setupWizardFireballArea.value = fireballColor;
+});
 
 var listElement = document.querySelector('.setup-similar-list');
 
@@ -93,3 +203,4 @@ var makeFiledFragment = function (wizards) {
 
 var fragment = makeFiledFragment(getListCharacters(4));
 listElement.appendChild(fragment);
+
